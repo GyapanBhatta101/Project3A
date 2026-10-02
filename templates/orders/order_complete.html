@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+
+```
+<div class="container">
+
+    <!-- SUCCESS MESSAGE -->
+    <div class="text-center mb-4">
+        <h2 class="text-success">
+            <i class="fa fa-check-circle"></i>
+            Order Completed Successfully!
+        </h2>
+
+        <p class="text-muted">
+            Thank you for your order.
+        </p>
+    </div>
+
+
+    <!-- INVOICE -->
+    <div class="card">
+
+        <div class="card-body">
+
+            <!-- INVOICE HEADER -->
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+                    <h3 class="mb-1">
+                        INVOICE
+                    </h3>
+
+                    <p class="text-muted mb-0">
+                        GreatKart
+                    </p>
+                </div>
+
+                <div class="col-md-6 text-md-right">
+
+                    <h5>
+                        Order #{{ order.order_number }}
+                    </h5>
+
+                    <p class="mb-0">
+                        Date:
+                        {{ order.created_at|date:"F d, Y" }}
+                    </p>
+
+                    <p class="mb-0">
+                        Payment:
+                        <span class="text-success">
+                            {{ order.payment.status }}
+                        </span>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- CUSTOMER INFORMATION -->
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+
+                    <h6 class="text-uppercase">
+                        Billed To
+                    </h6>
+
+                    <p class="mb-1">
+                        <strong>
+                            {{ order.first_name }}
+                            {{ order.last_name }}
+                        </strong>
+                    </p>
+
+                    <p class="mb-1">
+                        {{ order.email }}
+                    </p>
+
+                    <p class="mb-1">
+                        {{ order.phone }}
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <h6 class="text-uppercase">
+                        Address
+                    </h6>
+
+                    <p class="mb-1">
+                        {{ order.address_line_1 }}
+                    </p>
+
+                    {% if order.address_line_2 %}
+                    <p class="mb-1">
+                        {{ order.address_line_2 }}
+                    </p>
+                    {% endif %}
+
+                    <p class="mb-1">
+                        {{ order.city }},
+                        {{ order.state }}
+                    </p>
+
+                    <p class="mb-1">
+                        {{ order.country }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRODUCTS -->
+            <div class="table-responsive">
+
+                <table class="table table-bordered">
+
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th class="text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in order_products %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ item.product.product_name }}
+                                </strong>
+
+                                {% if item.variations.all %}
+                                    <br>
+
+                                    <small class="text-muted">
+
+                                        {% for variation in item.variations.all %}
+
+                                            {{ variation.variation_category|title }}:
+                                            {{ variation.variation_value }}
+
+                                            {% if not forloop.last %}
+                                                ,
+                                            {% endif %}
+
+                                        {% endfor %}
+
+                                    </small>
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                Rs. {{ item.product_price|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                {{ item.quantity }}
+                            </td>
+
+                            <td class="text-right">
+                                Rs.
+                                {% widthratio item.product_price 1 item.quantity %}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                No products found for this order.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- TOTALS -->
+            <div class="row justify-content-end">
+
+                <div class="col-md-5">
+
+                    <table class="table">
+                        <tr>
+                            <td>Tax (2%)</td>
+                            <td class="text-right">
+                                Rs. {{ order.tax|floatformat:2 }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Grand Total</th>
+                            <th class="text-right">
+                                Rs. {{ order.order_total|floatformat:2 }}
+                            </th>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- PAYMENT INFORMATION -->
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <p class="mb-1">
+                        <strong>Payment Method:</strong>
+                        {{ order.payment.payment_method }}
+                    </p>
+
+                    <p class="mb-1">
+                        <strong>Payment ID:</strong>
+                        {{ order.payment.payment_id }}
+                    </p>
+
+                </div>
+
+                <div class="col-md-6 text-md-right">
+
+                    <p class="text-success">
+                        <strong>
+                            Payment Completed
+                        </strong>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONTINUE SHOPPING -->
+    <div class="text-center mt-4">
+
+        <a href="{% url 'store' %}"
+           class="btn btn-primary">
+
+            Continue Shopping
+
+        </a>
+
+    </div>
+
+</div>
+```
+
+</section>
+
+{% endblock %}
